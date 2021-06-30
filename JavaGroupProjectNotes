@@ -1,0 +1,44 @@
+/* RESOURCES */
+Scrabble Rules: https://scrabble.hasbro.com/en-us/rules
+Assignment Instructions: https://www.cs.fsu.edu/~myers/cop3252/hw/hwx.html
+
+/* SET UP */
+// How many people are playing? No fewer than 2, no more than 4
+// Configure blank GUI (15 x 15 grid)
+/ Array of stacks to hold the chars
+// Generate a random number between 0-26, pop the stack at that index 
+// Check if there are no more tiles by checking if all stacks are empty 
+The following is the letter distribution (quantity) of the standard SCRABBLE set:A x 9   B x 2   C x 2   D x 4   E x 12F x 2   G x 3   H x 2   I x 9   J x 1K x 1   L x 4   M x 2   N x 6   O x 8P x 2   Q x 1   R x 6   S x 4   T x 6U x 4   V x 2   W x 2   X x 1   Y x 2Z x 1   Blank x 2
+// Create the 7-element char arrays as the racks for each player
+// Create corresponding array for points value for each character
+// Randomly choose a letter for each player 
+// Compare to see who has the lexiographically highest letter (blank tile beats any letter)
+// Create order of play based on draw
+// Populate the array racks for each player 
+
+* CLASSES */
+// Board class - 2-D array of Tiles objects? logic for tiles touching
+// Tile class - holds character, location on the board, flag for each side, integer for special points
+// Player class - order of play, individual score, current word chosen
+
+
+/* GAMEPLAY */ 
+// When user generates a word, must be at least two characters and no more than fifteen characters 
+// Check that the word the user generates is a word in the dictionary 
+// First word must start on the board's center square 
+// Error check that each new word must touch an existing word 
+// If blank square used, user must specify the character they want to replace it with
+// Calculate, store user score
+// Multiply the word score by the special tile value, if necessary 
+// BINGO rule, if necessary 
+// Repopulate user's 7-char array to replace used tiles
+// Add challenge option, just re-run the function to check if word is in dictionary API
+// Game ends when all stacks are empty and one player's rack array is empty or no more plays are possible (how to logic this?)
+// When the game ends, each player's score is reduced by the sum of his or her unplayed letters. In addition, if a player has used all of his or her letters, the sum of the other players' unplayed letters is added to that player's score. 
+// Player with the highest final score wins
+// In case of a tie, the player with the highest score before adding or deducting unplayed letters wins. 
+
+
+
+
+
