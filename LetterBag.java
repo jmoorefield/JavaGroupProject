@@ -9,12 +9,12 @@ public class LetterBag
 
     //don't know how much we would actually need to manipulate this 'letterBag' yet
     //we would probably have to change the container for the Stack<Tile> is much more manipulation is needed
-    private ArrayList<Stack<Tile>> letterBag;
+    private Vector<Stack<Tile>> letterBag;
     //private Object[] test;
 
     public LetterBag()
     {
-        this.letterBag = new ArrayList<>(27);
+        this.letterBag = new Vector<>(27);
         //WILL NOT WORK UNLESS PATH ON YOUR COMPUTER IS SET UP
         //probably needs fixing file issues
         File file = new File("/Users/hubner/Desktop/Compilations/letterBag.txt");
