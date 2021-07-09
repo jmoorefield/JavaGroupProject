@@ -6,7 +6,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 //class still needs work!
-public class Board extends GridPane
+public class Board
 {
     private Tile[][] DataBoard;
     private final GridPane ViewBoard;
@@ -23,10 +23,11 @@ public class Board extends GridPane
             {
                 StackPane tileHolder = new StackPane();
                 tileHolder.setAlignment(Pos.CENTER);
-                tileHolder.setStyle("-fx-background-color: #cea088");
-                Tile blankTile = new Tile("blank");
-                blankTile.getLetter().setFill(Color.WHITE);
+                tileHolder.setStyle("-fx-background-color: White");
+                Tile blankTile = new Tile(" ");
+                blankTile.getLetter().setFill(Color.BLACK);
                 tileHolder.getChildren().add(blankTile.getLetter());
+
 
                 //*********** un-comment to make "Drag-able" tiles in the board **************
                 //DragController makeDrag = new DragController(tileHolder, true);
@@ -35,6 +36,7 @@ public class Board extends GridPane
                 DataBoard[rows][cols] = blankTile;
             }
         }
+
         for (int i = 0; i < 15; i++) {
             ViewBoard.getColumnConstraints().add(new ColumnConstraints(Control.USE_PREF_SIZE, 35, Control.USE_PREF_SIZE, Priority.ALWAYS, HPos.CENTER, true));
             ViewBoard.getRowConstraints().add(new RowConstraints(Control.USE_PREF_SIZE, 35, Control.USE_PREF_SIZE, Priority.ALWAYS, VPos.CENTER, true));
@@ -44,4 +46,12 @@ public class Board extends GridPane
     }
     public GridPane getViewBoard() { return this.ViewBoard; }
 
+    //will need to set up the special tiles. it probably will take some creative approach or willpower
+    public void specialTile()
+    {
+
+
+    }
+
 }
+
