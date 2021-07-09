@@ -65,29 +65,21 @@ public class LetterBag
         }
     }
 
-
-    //has problems. mainly java sucks when creating iterators and manipulation of such.
-    //when random number is generated and selects a stack that is already empty by attempting to pop
-    //the program stops. if the random number generated never gets repeated enough times then the program
-    //gets to run normal. of course this is the case with only one player on the board. we maybe will have to change
-    // of containers for the data manipulation.
+    //***NEW EDIT***
+    //I think I fixed the issue with the manipulation of the containers of the letter back.
+    //p.s. java sucks with this crap
     public Tile getTile()
     {
+
         Random rnd = new Random();
-        int get = 1 +rnd.nextInt(27);
-        // I gotta say java sucks on encapsulating multiple containers and manipulation of the data inside
-        Iterator<Stack<Tile>> vectorItr = letterBag.listIterator(get);
-        Iterator<Stack<Tile>> beforeItr = letterBag.listIterator(get - 1);
+        Stack<Tile> tileStack = letterBag.get(rnd.nextInt(27));
         while(true)
         {
-            if(beforeItr.hasNext())
-                return  vectorItr.next().pop();
+            if(!tileStack.isEmpty())
+                return tileStack.pop();
             else
-            {
-                get = 1 +rnd.nextInt(27);
-                vectorItr = letterBag.listIterator( get);
-                beforeItr = letterBag.listIterator(get - 1);
-            }
+                tileStack = letterBag.get(rnd.nextInt(27));
+
         }
     }
 }
