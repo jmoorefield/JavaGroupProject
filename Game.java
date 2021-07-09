@@ -14,6 +14,10 @@ public class Game extends Application
         Board scrabble = new Board();
         window.setCenter(scrabble.getViewBoard());
         stage.setScene(new Scene(window, 800, 800));
+        LetterBag letters = new LetterBag();
+        letters.test();
+        Player player1 = new Player(letters);
+        window.setBottom(player1.getPlayerRack().getViewRack());
         stage.show();
     }
 }
