@@ -1,11 +1,20 @@
-1) You have to download the javafx libraries. Here is the site: https://gluonhq.com/products/javafx/   Download the "SDK" file that works with your operating system. Download version JavaFx 16.
+1) You have to download the javafx libraries. Here is the site: https://gluonhq.com/products/javafx/   
+Download the "SDK" file that works with your operating system. Download version JavaFx 16.
 
-2) Download all the .java files I have uploaded. They are in the "src" folder. (Jess I don't know yet how your dictionary class is supposed to be implemented). Also download the "TileImages" folder, the "letterBag.txt" textfile and the "compile.sh" shell file.
+2) Download all the .java files I have uploaded. They are in the "src" folder. 
+(Jess I don't know yet how your dictionary class is supposed to be implemented). 
+Also download the "TileImages" folder, the "letterBag.txt" textfile and the "compile.sh" shell file.
 
-3) Place JavaFx 16 library folder, all the .java files from "src" folder, the "TileImages" folder, the "letterBag.txt" textfile and "compile.sh" shell file in one folder. (NOTE: the JavaFx 16 library folder should be named javafx-sdk-16!!)
+3) Place JavaFx 16 library folder, all the .java files from "src" folder, the "TileImages" folder, 
+the "letterBag.txt" textfile and "compile.sh" shell file in one folder. (NOTE: the JavaFx 16 library folder should be named javafx-sdk-16!!)
 
-Now it should be noted that all of this is going to be run from a shell aka linux or terminal. If your enviroment is not set up with java then the compile.sh shell script will not work. 
+Now it should be noted that all of this is going to be run from a shell aka linux or terminal.
+If your enviroment is not set up with java then the compile.sh shell script will not work. 
 
-4) To run just type in your terminal ./compile.sh and it should work. If not make sure you set up everything like I said. 
-f it still does not work then send me a message. 
-(NOTE: This will not run on linprog servers. The obvious reason being that linprog is a server. Your last option is to set up java on your computer enviroment, to be able to run java commands from your terminal, or setting a path on your IDE of preference. (side note : I know how to do the latter only with jetbrains IDEs)) 
+4) Open the folder that has all the downloaded files form the terminal. 
+To run just type in your terminal ./compile.sh and it should work. If not make sure you set up everything like I said. 
+If it still does not work then send me a message. 
+(NOTE: This will not run on linprog servers. The obvious reason being that linprog is a server. 
+Your last option is to set up java on your computer enviroment, 
+to be able to run java commands from your terminal, or setting a path on your IDE of preference. 
+(side note : I know how to do the latter only with jetbrains IDEs)) 
