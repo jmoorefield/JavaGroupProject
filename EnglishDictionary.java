@@ -1,5 +1,4 @@
 /* Class to create the reference dictionary */
-/* Includes a simple main program to test functionality, will be deleted later */
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,21 +31,5 @@ public class EnglishDictionary {
 
     public boolean isValidWord(String word) {
         return hs.contains(word);
-    }
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        EnglishDictionary dict = new EnglishDictionary();
-
-        System.out.println("Testing the creation of the reference dictionary");
-        System.out.print("Please enter the word you would like to add to the Scrabble board: ");
-        String word = scanner.next();
-        boolean result = dict.isValidWord(word);
-        
-        if(result)
-            System.out.println("Word added to board!");
-        else
-            System.out.println("Sorry, that is not a valid word.");
-        scanner.close();
     }
 }
