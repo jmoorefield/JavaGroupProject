@@ -3,11 +3,10 @@
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
-import javafx.scene.control.Control;
-import javafx.scene.effect.Blend;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.event.EventHandler;
 import java.io.FileInputStream;
@@ -18,25 +17,15 @@ public class Tile
     private Image imageTile;
     private ImageView imageView;
     private final StackPane holder;
-    private final String Letter;
+    private String Letter;
     private final int value;
 
-    private double anchorX;
-    private double anchorY;
-
-    private double mouseOffsetFromNodeZeroX;
-    private double mouseOffsetFromNodeZeroY;
-
-    private EventHandler<MouseEvent> setAnchor;
-    private EventHandler<MouseEvent> updatePositionOnDrag;
     private EventHandler<MouseEvent> commitPositionOnRelease;
     private EventHandler<MouseEvent> dragging;
     private EventHandler<DragEvent> droppedTile;
     private EventHandler<DragEvent> overTile;
+    private EventHandler<MouseEvent>  updatePositionOnDrag;
 
-    private final int ACTIVE = 1;
-    private final int INACTIVE = 0;
-    private int cycleStatus = INACTIVE;
 
     private BooleanProperty isDraggable;
 
@@ -65,12 +54,17 @@ public class Tile
         setHandlers();
         setHandlerEvents();
         this.isDraggable.set(true);
-
     }
+
+
+
     //accessor function lets you manipulate the 'Text' from a Tile **careful**
-    public String getLetter(){ return this.Letter;}
-    public StackPane getHolder(){return this.holder;}
-    public Image getImage(){return this.imageTile;}
+    public String getLetter()
+    {
+        return new String(Letter);
+    }
+    public StackPane getHolder(){return new StackPane(holder);}
+    public Image getImage(){return new Image(imageTile.getUrl());}
     public void setImageTile(Image image)
     {
         this.imageTile = image;
@@ -79,51 +73,42 @@ public class Tile
         this.imageView.setFitWidth(30);
         this.holder.getChildren().add(imageView);
     }
+    public void setLetter(String letter)
+    {
+        this.Letter = letter;
+    }
 
     private void setHandlers()
     {
-        setAnchor = event -> {
-            if (event.isPrimaryButtonDown()) {
-                cycleStatus = ACTIVE;
-                anchorX = event.getSceneX();
-                anchorY = event.getSceneY();
-                mouseOffsetFromNodeZeroX = event.getX();
-                mouseOffsetFromNodeZeroY = event.getY();
-            }
+        /*
 
-            if (event.isSecondaryButtonDown()) {
-                cycleStatus = INACTIVE;
-                holder.setTranslateX(0);
-                holder.setTranslateY(0);
-            }
+        setAnchor = event ->
+        {
+        };
+        updatePositionOnDrag = event ->
+        {
         };
 
-        updatePositionOnDrag = event -> {
-            if (cycleStatus != INACTIVE)
-            {
-                holder.setEffect(new Blend());
-                holder.setTranslateX(event.getSceneX() - anchorX);
-                holder.setTranslateY(event.getSceneY() - anchorY);
-            }
-        };
+         */
 
-        commitPositionOnRelease = event -> {
-            if (cycleStatus != INACTIVE) {
-                //commit changes to LayoutX and LayoutY
-                holder.setLayoutX(event.getSceneX() - mouseOffsetFromNodeZeroX);
-                holder.setLayoutY(event.getSceneY() - mouseOffsetFromNodeZeroY);
-                holder.setTranslateX(0);
-                holder.setTranslateY(0);
-            }
+
+        commitPositionOnRelease = event ->
+        {
+            System.out.println("yes");
+            //holder.getChildren().add(imageView);
         };
 
         dragging = event ->
         {
-            Dragboard db = holder.startDragAndDrop(TransferMode.ANY);
-            db.setDragView(imageTile);
-            ClipboardContent content = new ClipboardContent();
-            content.putImage(imageTile);
-            db.setContent(content);
+            if(!holder.getChildren().isEmpty())
+            {
+                Dragboard db = holder.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                db.setDragView(imageTile);
+                content.putImage(imageTile);
+                db.setContent(content);
+                holder.getChildren().remove(0);
+            }
         };
 
 
@@ -131,7 +116,7 @@ public class Tile
         {
             if (event.getGestureSource() != holder &&
                     event.getDragboard().hasImage()) {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                event.acceptTransferModes(TransferMode.MOVE);
             }
         };
 
@@ -139,10 +124,19 @@ public class Tile
         {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasImage()) {
+            if (db.hasImage()){
                 setImageTile(db.getImage());
+
+                setLetter(db.getString());
                 success = true;
             }
+
+            //Here you get the indexes for the grid positions
+            GridPane test = (GridPane) holder.getParent().getParent();
+            int x = test.getRowIndex(holder.getParent());
+            int y = test.getColumnIndex(holder.getParent());
+            System.out.println("Row is "+x);
+            System.out.println("Column is "+y);
             event.setDropCompleted(success);
 
         };
@@ -152,33 +146,21 @@ public class Tile
         isDraggable = new SimpleBooleanProperty();
         isDraggable.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                holder.addEventFilter(MouseEvent.MOUSE_PRESSED, setAnchor);
-                holder.addEventFilter(MouseEvent.MOUSE_DRAGGED, updatePositionOnDrag);
+                //holder.addEventFilter(MouseEvent.MOUSE_PRESSED, setAnchor);
+                //holder.addEventFilter(MouseEvent.MOUSE_DRAGGED, updatePositionOnDrag);
                 holder.addEventFilter(MouseEvent.DRAG_DETECTED,dragging);
                 holder.addEventFilter(DragEvent.DRAG_OVER,overTile);
                 holder.addEventFilter(DragEvent.DRAG_DROPPED,droppedTile);
                 holder.addEventFilter(MouseEvent.MOUSE_RELEASED, commitPositionOnRelease);
             } else {
-                holder.removeEventFilter(MouseEvent.MOUSE_PRESSED, setAnchor);
-                holder.removeEventFilter(MouseEvent.MOUSE_DRAGGED, updatePositionOnDrag);
+                //holder.removeEventFilter(MouseEvent.MOUSE_PRESSED, setAnchor);
+                //holder.removeEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, updatePositionOnDrag);
                 holder.removeEventFilter(MouseEvent.DRAG_DETECTED,dragging);
                 holder.removeEventFilter(DragEvent.DRAG_OVER,overTile);
                 holder.removeEventFilter(DragEvent.DRAG_DROPPED,droppedTile);
                 holder.removeEventFilter(MouseEvent.MOUSE_RELEASED, commitPositionOnRelease);
             }
         });
-    }
-
-    public boolean isIsDraggable() {
-        return isDraggable.get();
-    }
-
-    public BooleanProperty isDraggableProperty() {
-        return isDraggable;
-    }
-    public void setIsDraggable(boolean set)
-    {
-        this.isDraggable.set(set);
     }
 
 

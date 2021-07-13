@@ -1,15 +1,16 @@
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Control;
+
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
 //class still needs work!
 public class Board
 {
     private Tile[][] DataBoard;
-    private final GridPane ViewBoard;
+    private GridPane ViewBoard;
 
     public Board()
     {
@@ -37,10 +38,7 @@ public class Board
 
     public GridPane getViewBoard() { return this.ViewBoard; }
     //will need to set up the special tiles. it probably will take some creative approach or willpower
-    public void specialTile()
-    {
 
 
-    }
 
 }

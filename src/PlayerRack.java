@@ -19,11 +19,12 @@ public class PlayerRack
             DataRack[x] = tile;
         }
 
+
         ViewRack = new GridPane();
-        for(int x = 0; x < 7; x++)
+        for(int cols = 0; cols < 7; cols++)
         {
-            Tile tile = DataRack[x];
-            ViewRack.add(tile.getHolder(),x,0);
+            Tile tile = DataRack[cols];
+            ViewRack.add(tile.getHolder(),cols,0);
         }
         ViewRack.setAlignment(Pos.CENTER);
         ViewRack.getRowConstraints().add(new RowConstraints(Control.USE_PREF_SIZE, 50, Control.USE_PREF_SIZE, Priority.ALWAYS, VPos.CENTER, true));
@@ -31,14 +32,12 @@ public class PlayerRack
             ViewRack.getColumnConstraints().add(new ColumnConstraints(Control.USE_PREF_SIZE, 50, Control.USE_PREF_SIZE, Priority.ALWAYS, HPos.CENTER, true));
         ViewRack.setGridLinesVisible(true);
 
-    }
-    public void PlayerMove(boolean set)
-    {
 
     }
+
     public GridPane getViewRack()
     {
-        return ViewRack;
+        return this.ViewRack;
     }
 
 
