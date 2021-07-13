@@ -1,0 +1,3 @@
+The set up to run the program is quite complicaed as one has to set up the javafx libraries for the program to even compile.
+Will try to fix this issue for you guys to able to actually work on the .java files.
+Aside from that, save the folder "src", folder "TileImages", and the textfile "letterBag.txt" in one folder to avoid issues with FileIputStreams.
