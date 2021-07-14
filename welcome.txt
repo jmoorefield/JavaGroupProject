@@ -1,0 +1,2 @@
+Welcome to our game of Scrabble!
+Please select the number of player.
