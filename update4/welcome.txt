@@ -1,0 +1,3 @@
+Welcome to Scrabble! 
+(Add explanation of rules here)
+Please select the number of players:
