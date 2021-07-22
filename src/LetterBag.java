@@ -2,14 +2,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-//class still needs work!
 public class LetterBag
 {
-
-
     private final Vector<Stack<Tile>> letterBag;
-    //private Object[] test;
-
     public LetterBag()
     {
         this.letterBag = new Vector<>(27);
@@ -31,6 +26,7 @@ public class LetterBag
                 }
                 this.letterBag.add(tiles);
             }
+            input.close();
         }
         catch (IOException | NoSuchElementException | IllegalStateException e)
         { e.printStackTrace(); }
@@ -58,21 +54,18 @@ public class LetterBag
         }
     }
 
-
-    //***NEW EDIT***
-    //I think I fixed the issue with the manipulation of the containers of the letter back.
-    //p.s. java sucks with this crap
     public Tile getTile()
     {
-        Random rnd = new Random();
-        Stack<Tile> tileStack = letterBag.get(rnd.nextInt(27));
-        while(true)
-        {
-            if(!tileStack.isEmpty())
-                return tileStack.pop();
-            else
-                tileStack = letterBag.get(rnd.nextInt(27));
-        }
+            Random rnd = new Random();
+            Stack<Tile> tileStack = letterBag.get(rnd.nextInt(27));
+            while(true)
+            {
+                if(!tileStack.isEmpty())
+                    return tileStack.pop();
+                else
+                    tileStack = letterBag.get(rnd.nextInt(27));
+            }
+
     }
 }
 

@@ -1,6 +1,8 @@
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -8,7 +10,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.event.EventHandler;
 import java.io.FileInputStream;
-import java.io.InputStream;
 
 
 public class Tile
@@ -18,6 +19,8 @@ public class Tile
     private final StackPane holder;
     private String Letter;
     private int value;
+    private int row;
+    private int column;
 
     private EventHandler<MouseEvent> commitPositionOnRelease;
     private EventHandler<MouseEvent> dragging;
@@ -36,7 +39,7 @@ public class Tile
         this.imageView.setFitHeight(40);
         this.imageView.setFitWidth(40);
         this.holder = new StackPane();
-        this.holder.setAlignment(Pos.CENTER);
+        holder.setAlignment(Pos.CENTER);
         this.holder.getChildren().add(imageView);
         setHandlers();
         setHandlerEvents();
@@ -48,10 +51,8 @@ public class Tile
         this.Letter = letter;
         this.value = 0;
         this.holder = new StackPane();
-        this.holder.setAlignment(Pos.CENTER);;
-        this.imageView = new ImageView();
-        this.imageView.setFitHeight(40);
-        this.imageView.setFitWidth(40);
+        this.holder.setAlignment(Pos.CENTER);
+        this.holder.setStyle("-fx-background-color: #c6bda1");
         setHandlers();
         setHandlerEvents();
         this.isDraggable.set(true);
@@ -62,13 +63,14 @@ public class Tile
     public StackPane getHolder()    { return new StackPane(holder); }
     public Image getImage()         { return new Image(imageTile.getUrl()); }
     public int getValue()           { return value; }
-    public ImageView getImageView(){return this.imageView;}
+    public int getRow()             { return row; }
+    public int getColumn()          { return column; }
 
 
     public void setImageTile(Image image)
     {
         this.imageTile = image;
-        this.imageView.setImage(imageTile);
+        this.imageView = new ImageView(image);
         this.imageView.setFitHeight(40);
         this.imageView.setFitWidth(40);
         this.holder.getChildren().add(imageView);
@@ -78,24 +80,61 @@ public class Tile
 
     private void setHandlers()
     {
+
+
         commitPositionOnRelease = event ->
         {
-            System.out.println("yes");
+            System.out.println(event.getSource().getClass().toString());
+            System.out.println(event.getTarget().getClass().toString());
+            if(event.getTarget().getClass() == StackPane.class)
+            {
+                GridPane test = (GridPane) holder.getParent().getParent();
+                this.row = test.getRowIndex(holder.getParent());
+                this.column = test.getColumnIndex(holder.getParent());
+                for(int x = 0; x < test.getChildren().size(); x++)
+                {
+                    if(test.getChildren().get(x) instanceof StackPane && test.getRowIndex(test.getChildren().get(x)) == row && test.getColumnIndex(test.getChildren().get(x)) == column)
+                    {
+                        test.getChildren().get(x).setVisible(true);
+                        break;
+                    }
+                }
+            }
 
-            //holder.getChildren().add(imageView);
+
+
         };
 
         dragging = event ->
         {
-            if(!holder.getChildren().isEmpty())
+            GridPane parent = (GridPane) holder.getParent().getParent();
+            StackPane child = null;
+            this.row = parent.getRowIndex(holder.getParent());
+            this.column = parent.getColumnIndex(holder.getParent());
+            for(int x = 0; x < parent.getChildren().size(); x++)
             {
-                Dragboard db = holder.startDragAndDrop(TransferMode.MOVE);
+                if(parent.getChildren().get(x) instanceof StackPane && parent.getRowIndex(parent.getChildren().get(x)) == row && parent.getColumnIndex(parent.getChildren().get(x)) == column)
+                {
+                    child = (StackPane) parent.getChildren().get(x);
+                    break;
+                }
+            }
+            if(child.isVisible())
+            {
+                Dragboard db = holder.startDragAndDrop(TransferMode.ANY);
                 ClipboardContent content = new ClipboardContent();
                 db.setDragView(imageTile);
                 content.putImage(imageTile);
                 content.putString(Letter + " " + String.valueOf(value));
                 db.setContent(content);
-                holder.getChildren().remove(0);
+                for(int x = 0; x < parent.getChildren().size(); x++)
+                {
+                    if(parent.getChildren().get(x) instanceof StackPane && parent.getRowIndex(parent.getChildren().get(x)) == row && parent.getColumnIndex(parent.getChildren().get(x)) == column)
+                    {
+                        ((StackPane) parent.getChildren().get(x)).getChildren().remove(0);
+                        break;
+                    }
+                }
             }
         };
 
@@ -111,40 +150,27 @@ public class Tile
         droppedTile = event ->
         {
             Dragboard db = event.getDragboard();
-            boolean success = false;
-            System.out.println(event.getGestureSource().toString());
-            /*
-            if(!event.getGestureSource().equals(holder))
-                System.out.println("Over a Tile");
-
-             */
-            if (db.hasImage())
+            if(event.getTarget().getClass() == StackPane.class)
             {
                 setImageTile(db.getImage());
                 setLetter(db.getString());
-                success = true;
+                holder.setDisable(true);
+                GridPane parent = (GridPane) holder.getParent().getParent();
+                this.row = parent.getRowIndex(holder.getParent());
+                this.column = parent.getColumnIndex(holder.getParent());
+                String temp = db.getString();
+                String[] split = temp.split(" ");
+                Board.addTileToMove(split[0], row, column, split[1]);
             }
-
-            //Here you get the indexes for the grid positions
-            // need to transfer score value
-            GridPane test = (GridPane) holder.getParent().getParent();
-            int row = test.getRowIndex(holder.getParent());
-            int column = test.getColumnIndex(holder.getParent());
-
-            String temp = db.getString();
-            String[] split = temp.split(" ");
-            Board.addTileToMove(split[0], row, column, split[1]);
-            System.out.println("Value is: " + split[1]);
-            event.setDropCompleted(success);
 
         };
     }
 
-    public void setHandlerEvents() {
+    public void setHandlerEvents()
+    {
         isDraggable = new SimpleBooleanProperty();
         isDraggable.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-
                 holder.addEventFilter(MouseEvent.DRAG_DETECTED,dragging);
                 holder.addEventFilter(DragEvent.DRAG_OVER,overTile);
                 holder.addEventFilter(DragEvent.DRAG_DROPPED,droppedTile);
