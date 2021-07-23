@@ -1,0 +1,6 @@
+the loop over ViewRack in updateRack() in PlayerRack.java isn't working, 
+so i have no idea how to repopulate the racks.
+i did figure out how to clear tiles from the board by adding a new tile over every one in currentMove, 
+but it erases the grid lines between tiles when i do that. i think clearMove() in Board was supposed to be an alternative to that method, 
+but i have no idea if i wrote it correctly--please feel free to change it if you see errors.
+at this point i think the only main work left is removing tiles from the board correctly, repopulating the racks, and dealing with blank tiles.
