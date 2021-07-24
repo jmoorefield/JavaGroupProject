@@ -1,0 +1,3 @@
+Grid lines still aren't showing when a tile is removed but at this point i don't really care about it anymore. 
+Only major issue is that when a rack is repopulated after a successful move, the new tiles in the rack aren't draggable anymore. 
+let me know what you think!
