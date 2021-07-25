@@ -1,0 +1,2 @@
+This is the final version, with comments! I need your help in some spaces to add additional comments
+about the GUI and the difference between the two constructors in Tile, but I think that's all!
