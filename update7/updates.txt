@@ -1,2 +1,0 @@
-I think everything is finished! This update includes an explanation of the game + ascii art in the textprompt, 
-patches of some logic bugs, a pass button, and error checking for starting the game on the center tile. 
