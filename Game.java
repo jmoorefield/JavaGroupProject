@@ -1,3 +1,11 @@
+/* COP3252
+Jess Moorefield, Roderick Quiel
+Group Project
+25 July 2021 
+*/
+
+/* This class runs the game and controls the buttons used by the players. */
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -10,86 +18,111 @@ import java.util.*;
 
 public class Game extends Application
 {
+    // member data for the dictionary, letterbag, players, board objects used
     public static EnglishDictionary dict;
     public static LetterBag letters;
+    public static BorderPane window;
+    public static TextPrompt textPrompt;
     private Board scrabble;
     private Player[] players;
-    private int[] playerOrder;
-    private int currentPlayerOrder = 0;
+
+    // sets of buttons used by the players:
+    // selecting the number of players
+    // and actions during the game
+    private Button[] playerButtons;     
+    private Button[] boardButtons;
+
+    private int[] playerOrder;          // holds the order of the players
+    private int currentPlayerOrder = 0; // holds the index of the current player from playerOrder[]
 
     @Override
     public void start(Stage stage)
     {
-        BorderPane window = new BorderPane();
+        // GUI configuration
+        window = new BorderPane();
         window.setStyle("-fx-background-color: #1c839e;");
-        TextPrompt textPrompt = new TextPrompt();
+        textPrompt = new TextPrompt();
         GridPane textHolder = new GridPane();
         textHolder.setAlignment(Pos.CENTER);
         textHolder.add(textPrompt.getPrompt(), 0,0);
 
-        // initialize variables 
+        // initialize data 
         scrabble = new Board();
         letters = new LetterBag();
         dict = new EnglishDictionary();
+        playerButtons = new Button[3];
+        boardButtons = new Button[5];
 
         // create buttons
-        Button twoPlayers = new Button("2 Players");
-        Button threePlayers = new Button("3 Players");
-        Button fourPlayers = new Button("4 Players");
-        Button move = new Button("Make Move");
-        Button end = new Button("End Turn");
-        Button cancel = new Button("Cancel Move");
-        Button noMoves = new Button ("No more moves possible");
+        playerButtons[0] = new Button("2 Players");
+        playerButtons[1] = new Button("3 Players");
+        playerButtons[2] = new Button("4 Players");
 
+        boardButtons[0] = new Button("Make Move");
+        boardButtons[1] = new Button ("No more moves possible");
+        boardButtons[2] = new Button("End Turn");
+        boardButtons[3] = new Button("Cancel Move");
+        boardButtons[4] =  new Button("Pass");
+        for(int x = 0; x < 5; x ++)
+        {
+            boardButtons[x].setPrefSize(300,35);
+        }
+
+        // GUI configuration
         window.setCenter(scrabble.getViewBoard());
-        stage.setScene(new Scene(window, 1000, 800));
+        stage.setScene(new Scene(window, 1000, 750));
         window.setRight(textHolder);
 
-        textHolder.add(twoPlayers,0,1);
-        textHolder.add(threePlayers,0,2);
-        textHolder.add(fourPlayers,0,3);
+        // add buttons to GUI
+        for(int i = 0; i < playerButtons.length; ++i) {
+            textHolder.add(playerButtons[i],0,i+1);
+        }
+        
         stage.show();
         textPrompt.Welcome();
 
-        twoPlayers.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        /* BEGIN FUNCTIONS FOR WHEN BUTTONS ARE CLICKED */
+        playerButtons[0].setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event)
             {
-                if(!twoPlayers.isDisable())
+                if(!playerButtons[0].isDisable())
                 {
                     getPlayersOrder(2, textPrompt);
                     hidePlayerRacks();
                     window.setBottom(players[playerOrder[0]-1].getPlayerRack().getViewRack());
                     manageButtons();
                     textHolder.getChildren().remove(1);
-                    textHolder.add(move,0,1);
-                    textHolder.add(end,0,2);
-                    textHolder.add(cancel, 0,3);
-                    textHolder.add(noMoves, 0, 4);
+
+                    // add buttons to GUI
+                    for(int i = 0; i < boardButtons.length; ++i) {
+                        textHolder.add(boardButtons[i],0,i+1);
+                    }
+
                     textPrompt.getPrompt().appendText("It's Player " + playerOrder[0] + "'s Turn\n");
                     event.consume();
                 }
                 event.consume();
             }
 
-            // disable # of player buttons and cancel / noMoves
+            // different buttons are shown at different times in the game
+            // if a player is not trying to make a move, no need to show
+            // end turn, cancel move, or pass move buttons
+            // once the # of players has been selected, hide those buttons too
             public void manageButtons()
             {
-                twoPlayers.setDisable(true);
-                threePlayers.setDisable(true);
-                fourPlayers.setDisable(true);
-                twoPlayers.setVisible(false);
-                threePlayers.setVisible(false);
-                fourPlayers.setVisible(false);
-                twoPlayers.setManaged(false);
-                threePlayers.setManaged(false);
-                fourPlayers.setManaged(false);
-                cancel.setDisable(true);
-                cancel.setVisible(false);
-                cancel.setManaged(false);
-                noMoves.setDisable(true);
-                noMoves.setVisible(false);
-                noMoves.setManaged(false);
+                for(int i = 0; i < playerButtons.length; ++i)
+                {
+                    playerButtons[i].setDisable(true);
+                    playerButtons[i].setVisible(false);
+                    playerButtons[i].setManaged(false);
+                }
+                for(int j = 2; j < boardButtons.length; ++j)
+                {
+                    boardButtons[j].setDisable(true);
+                    boardButtons[j].setVisible(false);
+                    boardButtons[j].setManaged(false);
+                }
             }
 
             // make every player's rack unclickable
@@ -99,21 +132,22 @@ public class Game extends Application
             }
         });
 
-        threePlayers.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        playerButtons[1].setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event)
             {
-                if(!threePlayers.isDisable())
+                if(!playerButtons[1].isDisable())
                 {
                     getPlayersOrder(3, textPrompt);
                     hidePlayerRacks();
                     window.setBottom(players[playerOrder[0]-1].getPlayerRack().getViewRack());
                     manageButtons();
                     textHolder.getChildren().remove(1);
-                    textHolder.add(move,0,1);
-                    textHolder.add(end,0,2);
-                    textHolder.add(cancel, 0,3);
-                    textHolder.add(noMoves, 0, 4);
+                   
+                    for(int i = 0; i < boardButtons.length; ++i) {
+                        textHolder.add(boardButtons[i],0,i+1);
+                    }
+
                     textPrompt.getPrompt().appendText("It's Player " + playerOrder[0] + "'s Turn\n");
                     event.consume();
                 }
@@ -121,22 +155,16 @@ public class Game extends Application
             }
 
             public void manageButtons() {
-                twoPlayers.setDisable(true);
-                threePlayers.setDisable(true);
-                fourPlayers.setDisable(true);
-                twoPlayers.setVisible(false);
-                threePlayers.setVisible(false);
-                fourPlayers.setVisible(false);
-                twoPlayers.setManaged(false);
-                threePlayers.setManaged(false);
-                fourPlayers.setManaged(false);
-                cancel.setDisable(true);
-                cancel.setVisible(false);
-                cancel.setManaged(false);
-                noMoves.setDisable(true);
-                noMoves.setVisible(false);
-                noMoves.setManaged(false);
-
+                for(int i = 0; i < playerButtons.length; ++i) {
+                    playerButtons[i].setDisable(true);
+                    playerButtons[i].setVisible(false);
+                    playerButtons[i].setManaged(false);
+                }
+                for(int j = 2; j < boardButtons.length; ++j) {
+                    boardButtons[j].setDisable(true);
+                    boardButtons[j].setVisible(false);
+                    boardButtons[j].setManaged(false);
+                }
             }
 
             public void hidePlayerRacks() {
@@ -145,45 +173,39 @@ public class Game extends Application
             }
         });
 
-        fourPlayers.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        playerButtons[2].setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event)
             {
-                if(!fourPlayers.isDisable())
+                if(!playerButtons[2].isDisable())
                 {
                     getPlayersOrder(4, textPrompt);
                     hidePlayerRacks();
                     window.setBottom(players[playerOrder[0]-1].getPlayerRack().getViewRack());
                     manageButtons();
                     textHolder.getChildren().remove(1);
-                    textHolder.add(move,0,1);
-                    textHolder.add(end,0,2);
-                    textHolder.add(cancel, 0,3);
-                    textHolder.add(noMoves, 0, 4);
+                   
+                    for(int i = 0; i < boardButtons.length; ++i) {
+                        textHolder.add(boardButtons[i],0,i+1);
+                    }
+
                     textPrompt.getPrompt().appendText("It's Player " + playerOrder[0] + "'s Turn\n");
                     event.consume();
                 }
                 event.consume();
             }
 
-            public void manageButtons()
-            {
-                twoPlayers.setDisable(true);
-                threePlayers.setDisable(true);
-                fourPlayers.setDisable(true);
-                twoPlayers.setVisible(false);
-                threePlayers.setVisible(false);
-                fourPlayers.setVisible(false);
-                twoPlayers.setManaged(false);
-                threePlayers.setManaged(false);
-                fourPlayers.setManaged(false);
-                cancel.setDisable(true);
-                cancel.setVisible(false);
-                cancel.setManaged(false);
-                noMoves.setDisable(true);
-                noMoves.setVisible(false);
-                noMoves.setManaged(false);
-
+            public void manageButtons() {
+                for(int i = 0; i < playerButtons.length; ++i) {
+                    playerButtons[i].setDisable(true);
+                    playerButtons[i].setVisible(false);
+                    playerButtons[i].setManaged(false);
+                }
+                for(int j = 2; j < boardButtons.length; ++j) {
+                    boardButtons[j].setDisable(true);
+                    boardButtons[j].setVisible(false);
+                    boardButtons[j].setManaged(false);
+                }
             }
 
             public void hidePlayerRacks() {
@@ -192,125 +214,160 @@ public class Game extends Application
             }
         });
 
-        // button player clicks to make a move
-       move.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        // button clicked to make a move
+        boardButtons[0].setOnMouseClicked(new EventHandler<MouseEvent>() {
         @Override
-        public void handle(MouseEvent event)
-        {
+        public void handle(MouseEvent event) {
+            // show the rack of the current player
+            // currentPlayerOrder stores 1,2,3, not 0,1,2
+            // which is why we subtract 1
+            // so we access the player that is at the current index of playerOrder[]
             players[playerOrder[currentPlayerOrder]-1].getPlayerRack().setViewRackMove(true);
             
-            noMoves.setDisable(false);
-            noMoves.setVisible(true);
-            noMoves.setManaged(true);
-
-            cancel.setDisable(false);
-            cancel.setVisible(true);
-            cancel.setManaged(true);
+            // show the buttons related to making a move
+            for(int j = 2; j < boardButtons.length; ++j) {
+                boardButtons[j].setDisable(false);
+                boardButtons[j].setVisible(true);
+                boardButtons[j].setManaged(true);
+            }
         }
         });
 
-        // button player clicks to cancel their move
-        cancel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        // button clicked when there are no more possible moves
+        boardButtons[1].setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-               Board.onCancel();
-            }
-            });
-
-        // button player clicks once they've finished their word
-        end.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                cancel.setDisable(true);
-                cancel.setVisible(false);
-                cancel.setManaged(false);
-
-                noMoves.setDisable(true);
-                noMoves.setVisible(false);
-                noMoves.setManaged(false);
-
-                players[playerOrder[currentPlayerOrder]-1].getPlayerRack().setViewRackMove(false);
-                int result = Board.onEndOfTurn(players[playerOrder[currentPlayerOrder]-1]);
-
-                if(result == 0) {
-
-                textPrompt.getPrompt().appendText("Player " + playerOrder[currentPlayerOrder] + "'s score is: " + players[playerOrder[currentPlayerOrder]-1].getScore() + "\n");
-
-                    if(currentPlayerOrder < (players.length-1))
-                        currentPlayerOrder++;
-                    else
-                        currentPlayerOrder = 0;
-
-                window.setBottom(players[playerOrder[currentPlayerOrder]-1].getPlayerRack().getViewRack());
-                textPrompt.getPrompt().appendText("It's Player " + playerOrder[currentPlayerOrder] + "'s Turn\n");
-                
-                }
-                
-                else if(result == 1) {
-                    textPrompt.getPrompt().appendText("Sorry, that's not a valid move.\n");
-                    textPrompt.getPrompt().appendText("Player " + playerOrder[currentPlayerOrder] + "'s score is: " + players[playerOrder[currentPlayerOrder]-1].getScore() + "\n");
-
-                    if(currentPlayerOrder < (players.length-1))
-                        currentPlayerOrder++;
-                    else
-                        currentPlayerOrder = 0;
-
-                window.setBottom(players[playerOrder[currentPlayerOrder]-1].getPlayerRack().getViewRack());
-                textPrompt.getPrompt().appendText("It's Player " + playerOrder[currentPlayerOrder] + "'s Turn\n");
-                }
-
-                else if(result == 2) {
-                    textPrompt.getPrompt().appendText("Game over! The winner is: " + Board.getWinner(players));
-                    Board.getWinner(players); 
-
-                    move.setDisable(true);
-                    move.setVisible(false);
-                    move.setManaged(false);
-
-                    end.setDisable(true);
-                    end.setVisible(false);
-                    end.setManaged(false);
+                textPrompt.getPrompt().appendText("Game over! The winner is Player " + Board.getWinner(players));
+        
+                for(int i = 0; i < boardButtons.length; ++i) {
+                    boardButtons[i].setDisable(true);
+                    boardButtons[i].setVisible(false);
+                    boardButtons[i].setManaged(false);
                 }
             }
         });
 
-        // button player clicks when there are no more possible moves
-        noMoves.setOnMouseClicked(new EventHandler<MouseEvent>() {
+         // button player clicks once they've finished their turn
+        boardButtons[2].setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event)
             {
-                textPrompt.getPrompt().appendText("Game over! The winner is Player " + Board.getWinner(players));
-        
-                move.setDisable(true);
-                move.setVisible(false);
-                move.setManaged(false);
-                end.setDisable(true);
-                end.setVisible(false);
-                end.setManaged(false);
-                cancel.setDisable(true);
-                cancel.setVisible(false);
-                cancel.setManaged(false);
-                noMoves.setDisable(true);
-                noMoves.setVisible(false);
-                noMoves.setManaged(false);
+                // no need to show buttons related to creating the move
+                boardButtons[2].setDisable(true);
+                boardButtons[2].setVisible(false);
+                boardButtons[2].setManaged(false);
+                boardButtons[3].setDisable(true);
+                boardButtons[3].setVisible(false);
+                boardButtons[3].setManaged(false);
+
+                // disable the current player's rack
+                players[playerOrder[currentPlayerOrder]-1].getPlayerRack().setViewRackMove(false);
+
+                // get the result of their move
+                int result = Board.onEndOfTurn(players[playerOrder[currentPlayerOrder]-1]);
+
+                switch(result) {
+
+                    // if the word is valid
+                    case 0:
+                        textPrompt.getPrompt().appendText("Player " + playerOrder[currentPlayerOrder] + "'s score is: " + players[playerOrder[currentPlayerOrder]-1].getScore() + "\n");
+
+                        // this logic cycles through the 0,1,2 indices to repeat the player order
+                        if(currentPlayerOrder < (players.length-1))
+                            currentPlayerOrder++;
+                        else
+                            currentPlayerOrder = 0;
+                        window.setBottom(players[playerOrder[currentPlayerOrder]-1].getPlayerRack().getViewRack());
+                        textPrompt.getPrompt().appendText("It's Player " + playerOrder[currentPlayerOrder] + "'s Turn\n");
+                        break;
+
+                    // if the word is invalid
+                    case 1:
+                        textPrompt.getPrompt().appendText("Sorry, that's not a valid move.\n");
+                        textPrompt.getPrompt().appendText("Player " + playerOrder[currentPlayerOrder] + "'s score is: " + players[playerOrder[currentPlayerOrder]-1].getScore() + "\n");
+                        if(currentPlayerOrder < (players.length-1))
+                            currentPlayerOrder++;
+                        else
+                            currentPlayerOrder = 0;
+                        window.setBottom(players[playerOrder[currentPlayerOrder]-1].getPlayerRack().getViewRack());
+                        textPrompt.getPrompt().appendText("It's Player " + playerOrder[currentPlayerOrder] + "'s Turn\n");
+                        break;
+
+                    // if the letterbag is empty
+                    case 2:
+                        textPrompt.getPrompt().appendText("Game over! The winner is: " + Board.getWinner(players));
+                        Board.getWinner(players); 
+
+                        for(int i = 0; i < boardButtons.length; ++i) {
+                            boardButtons[i].setDisable(true);
+                            boardButtons[i].setVisible(false);
+                            boardButtons[i].setManaged(false);
+                        }
+                        break;
+
+                    // if there are no tiles in the current move
+                    case 3:
+                        textPrompt.getPrompt().appendText("A move must include at least one letter.\n");
+                        break; 
+
+                    // if the first move on the board doesn't include the center tile
+                    case 4:
+                        textPrompt.getPrompt().appendText("The first move must include the center tile.\n");
+                        Board.onCancel(players[playerOrder[currentPlayerOrder]-1]);
+                        break;
+                }
+            }
+        });
+
+         // button clicked to cancel a move
+        boardButtons[3].setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+               Board.onCancel(players[playerOrder[currentPlayerOrder]-1]);
+            }
+        });
+
+         // button clicked to pass 
+        boardButtons[4].setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                boardButtons[2].setDisable(true);
+                boardButtons[2].setVisible(false);
+                boardButtons[2].setManaged(false);
+                boardButtons[3].setDisable(true);
+                boardButtons[3].setVisible(false);
+                boardButtons[3].setManaged(false);
+
+                players[playerOrder[currentPlayerOrder]-1].getPlayerRack().setViewRackMove(false);
+
+                if(currentPlayerOrder < (players.length-1))
+                    currentPlayerOrder++;
+                else
+                     currentPlayerOrder = 0;
+
+                window.setBottom(players[playerOrder[currentPlayerOrder]-1].getPlayerRack().getViewRack());
+                textPrompt.getPrompt().appendText("It's Player " + playerOrder[currentPlayerOrder] + "'s Turn\n");
             }
         });
     }
+    /* BEGIN FUNCTIONS FOR WHEN BUTTONS ARE CLICKED */
 
     // determines order of players
     public void getPlayersOrder(int numPlayers, TextPrompt textprompt) {
         players = new Player[numPlayers];
         playerOrder = new int[numPlayers];
 
+        // initialize the players 
         for(int i = 0; i < numPlayers; ++i) {
-            players[i] = new Player(letters, "xxx");
+            players[i] = new Player(letters);
         }
 
         Random rand = new Random();
         List<Integer> letters = new ArrayList<Integer>(numPlayers);
         List<Integer> sortedLetters = new ArrayList<Integer>(numPlayers);
 
+        // each player randomly draws a letter from the letter bag
+        // here represented by numbers 0-25
         for(int i = 0; i < numPlayers; ++i) {
             int num = rand.nextInt(26);
             for (int l : letters) {
@@ -320,21 +377,24 @@ public class Game extends Application
             letters.add(num);
         }
 
+        // find order of the numbers
         for(int letter : letters)
             sortedLetters.add(letter);
 
         Collections.sort(sortedLetters);
 
+        // establish player order based on which player drew what number
         for(int k = 0, j = numPlayers-1; k < numPlayers && j >= 0; ++k, --j)
             playerOrder[k] = letters.indexOf(sortedLetters.get(j)) + 1;
 
         textprompt.showPlayerOrder(playerOrder);
     }
 
-    
+    // main function that creates the game
     public static void main(String[] args)
     {
         launch(args);
 
     }
 }
+ 

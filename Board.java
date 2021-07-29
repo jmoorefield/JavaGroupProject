@@ -1,3 +1,11 @@
+/* COP3252
+Jess Moorefield, Roderick Quiel
+Group Project
+25 July 2021 
+*/
+
+/* This class controls the GUI and data portions of the game board and constructs a player's move. */
+
 import java.util.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -9,89 +17,167 @@ public class Board
 {
     private static Tile[][] DataBoard;
     private static GridPane ViewBoard;
+    //make a 2D array of ints to signify whether a tile holds points (flags the way that the word or letter is doubled or tripled/////////////////////////////////////////////////
+    private static Tile[][] numPoints;  
+    /*The value for a light blue square is 2, dark blue is 3 (each respectively affect the letter's score)
+        The Red value will be 0 (triples word value), and the pink value witll be 1 (doubles word value)
+    */
+
+    // each list contains Strings that hold data about each tile in the current move
     private static List<List<String>> currentMove;
+    private static boolean emptyBoard;
 
     public Board()
     {
         ViewBoard = new GridPane();
         DataBoard = new Tile[15][15];
         currentMove = new ArrayList<List<String>>();
-        ViewBoard.setPrefSize(500,500);
+        ViewBoard.setPrefSize(800,500);
         ViewBoard.setAlignment(Pos.CENTER);
-
-        for(int rows = 0; rows < 15; rows++)
-        {
-            for(int cols = 0; cols < 15; cols++ )
+        emptyBoard = true;
+///////////////////////////////////////////////////////////////////////////////////////////
+        // populate the board with blank  & colored tiles
+        for(int rows = 1; rows < 16; rows++)
+        {   //So I accidentally wrote the pink if statememnt thinking that we started at 1, but originally it 
+            //started at 0, but it makes things in this part a lot harder if it's 0, so I changed it to 1
+            for(int cols = 1; cols < 16; cols++ )
             {
                 Tile blankTile = new Tile(" ");
                 ViewBoard.add(blankTile.getHolder(), cols, rows);
                 DataBoard[rows][cols] = blankTile;
+                //Color in the pink squares
+                
+                if((rows == 2 && cols == 2) || (rows == 3 && cols == 3) || (rows == 4 && cols == 4) || (rows == 5 && cols == 5) ||  (rows == 2 && cols == 14) || (rows == 3 && cols == 13) || (rows == 4 && cols == 12) || (rows == 5 && cols == 11) || (rows == 14 && cols == 2) || (rows == 13 && cols == 3) || (rows == 12 && cols == 4) || (rows == 11 && cols == 5) || (rows == 14 && cols == 14) || (rows == 13 && cols == 13) || (rows == 12 && cols == 12) || (rows == 11 && cols == 11) || (rows == 8 && cols == 8))
+                {
+                    PinkTile pinkTile = new PinkTile(" ");
+                    ViewBoard.add(pinkTile.getHolder(), cols, rows);
+                    DataBoard[rows][cols] = pinkTile;
+                    numPoints[rows][cols] = 1; //sets flag for pink
+                }
+                else if ((rows == 1 && cols == 1) || (rows == 1 && cols == 8 ) || (rows == 1 && cols == 15) || (rows == 8 && cols == 1) || (rows == 8 && cols == 15) || (rows == 1 && cols == 15) || (rows == 15 && cols == 8) || (rows == 15 && cols == 15))
+                {
+                    RedTile redTile = new RedTile(" ");
+                    ViewBoard.add(redTile.getHolder(), cols, rows);
+                    DataBoard[rows][cols] = redTile;
+                    numPoints[rows][cols] = 0; //sets flag for red                
+                }
+                //do if statements for the blues as well, then have blank as a else catch-all
             }
         }
 
+        // configure GUI
         for (int i = 0; i < 15; i++) {
             ViewBoard.getColumnConstraints().add(new ColumnConstraints(Control.USE_PREF_SIZE, 45, Control.USE_PREF_SIZE, Priority.ALWAYS, HPos.CENTER, true));
             ViewBoard.getRowConstraints().add(new RowConstraints(Control.USE_PREF_SIZE, 45, Control.USE_PREF_SIZE, Priority.ALWAYS, VPos.CENTER, true));
         }
         ViewBoard.setGridLinesVisible(true);
-        //ViewBoard.setStyle("-fx-background-color: #18733e");
     }
 
     public GridPane getViewBoard() { return ViewBoard; }
+    public static void setBoardStatus(boolean isEmpty) { emptyBoard = isEmpty; }
 
-
-    // gets information from tile class to temporarily add a tile to the container
+    // called from Tile's droppedTile event
+    // temporarily adds a tile to currentMove
+    //LOOK @ THE INTS ARRAY
     public static void addTileToMove(String letter, int row, int column, String value) {
         List<String> tile =  new ArrayList<String>();
         tile.add(letter);
         tile.add(String.valueOf(row));
         tile.add(String.valueOf(column));
         tile.add(value);
+        //tile.add.stringOf
         currentMove.add(tile);
     }
 
-    // calculates special points value based on location of tile on board
-    public static int specialTiles(int row, int column) { return 1;}
-
-    // gets boolean returned from player class to decide whether to update databoard
+    // called from EndOfTurn
+    // gets boolean returned from Player to decide whether to update the board's data
     // only updates if player has a successful move
     public static boolean updateBoard(boolean update) {
-        if(update)
-        {
+        if(update) {
             for(List<String> tile : currentMove) {
                 DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setLetter(tile.get(0));
                 DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPointsValue(Integer.parseInt(tile.get(3)));
+                DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPreviousMove(true);
             }
             currentMove.clear();
             return true;
         }
-        else
-        {
-            //Tile tile = new Tile("blank");
-            //ViewBoard.add(tile.getHolder(),1, 0);
-            // TODO: remove the incorrect tiles from the board 
-        }
+        
+        // if move isn't valid, replace the player's move with blank tiles
+        else {
+            for(List<String> tile : currentMove)
+            {
+                if(!DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].isPreviousMove()) {
+                    DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setLetter(" ");
+                    DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPointsValue(0);
+                    DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPreviousMove(false);
+                    for(int x = 0; x < ViewBoard.getChildren().size(); x++)
+                    {
+                        if(ViewBoard.getChildren().get(x) instanceof StackPane && ViewBoard.getRowIndex(ViewBoard.getChildren().get(x)) == Integer.parseInt(tile.get(1))
+                                && ViewBoard.getColumnIndex(ViewBoard.getChildren().get(x)) == Integer.parseInt(tile.get(2)))
+                        {
+                            StackPane child = (StackPane) ViewBoard.getChildren().get(x);
+                            if(child.isDisabled())
+                                child.getChildren().remove(0);
+                            child.setDisable(false);
+                            break;
+                        }
+                    }
+                }
+            }
+         }
         currentMove.clear();
         return false;
     }
 
-    public static int onEndOfTurn(Player player)
-    {
-         // the only information the player class needs for the final move is
-        // letter, tile value, and special points
-         // so create a new container to only send that information
-        List<List<String>> finalMove = new ArrayList<List<String>>();
+    public static int onEndOfTurn(Player player) {
+        // these two options are placed here just so the function doesn't have to waste time
+        if(currentMove.size() == 0 )
+            return 3;
+        
+        // checks if the center tile is empty or not 
+        else if(emptyBoard) {
+            boolean flag = false;
+            for(List<String> tile : currentMove) {
+                if(Integer.parseInt(tile.get(1)) == 7 && Integer.parseInt(tile.get(2)) == 7)
+                    flag = true;
+            }
+            if(!flag)
+                return 4;
+        }
+
+        // does currentMove use a tile already on the board?
         boolean useETile = false;
+
+        // variables to look at the beginning and end of currentMove
         int startCol = Integer.parseInt(currentMove.get(0).get(2));
         int endCol = Integer.parseInt(currentMove.get(currentMove.size()-1).get(2));
         int startRow = Integer.parseInt(currentMove.get(0).get(1));
         int endRow = Integer.parseInt(currentMove.get(currentMove.size()-1).get(1));
 
-        // we are going horizontally
-        if(endCol - startCol != 0) {    
+        // if player's move is only 1 tile, are they building
+        // horizontal or vertical? 
+        boolean oneHorizontal = false;
+        boolean oneVertical = false;
+
+        if(currentMove.size() == 1) {
+            int row = Integer.parseInt(currentMove.get(0).get(1));
+            int col = Integer.parseInt(currentMove.get(0).get(2));
+
+            if(col + 1 < 15 && DataBoard[row][col + 1].getLetter() != " ") 
+                oneHorizontal = true;
+            else if(col - 1 >= 0 && DataBoard[row][col - 1].getLetter() != " ")
+                oneHorizontal = true;
+            else if(row + 1 < 15 && DataBoard[row + 1 ][col].getLetter() != " ")
+                oneVertical = true;
+            else if(row - 1 >= 0 && DataBoard[row - 1][col].getLetter() != " ")
+                oneVertical = true;
+        }
+
+        // currentMove is horizontal
+        if(endCol - startCol != 0 || oneHorizontal) {    
                 // if you can go backwards from start tile 
-                if(startCol - 1 >= 0)
-                {
+                if(startCol - 1 >= 0) {
                     int currentTile = startCol - 1;
                     while(currentTile >= 0) {
                     // if there is a tile one col behind the current tile, include it at beginning of move
@@ -103,16 +189,16 @@ public class Board
                             tile.add(String.valueOf(DataBoard[startRow][currentTile].getValue()));
                             currentMove.add(0, tile);
                             useETile = true;
+                            currentTile--;
                         }
-                    currentTile--;
+                        else
+                            break;
                     }
                 }
 
-                if(currentMove.size() > 1)
-                {
+                if(currentMove.size() > 1) {
                     // if we still have middle tiles 
-                    if(startCol + 1 < endCol)
-                    {
+                    if(startCol + 1 < endCol) {
                     int currentMovePos = 0;
                     int distance = Integer.parseInt(currentMove.get(currentMovePos+1).get(2)) - Integer.parseInt(currentMove.get(0).get(2));
                         // if we need to add prexisting tiles to the move
@@ -137,11 +223,9 @@ public class Board
                 } 
             
                 // if you can go forwards from end tile
-                if(endCol + 1 < 15)
-                {
+                if(endCol + 1 < 15) {  
                     int currentTile = endCol + 1;
-                    while(currentTile < 15)
-                    {
+                    while(currentTile < 15) {
                     // if there is a tile one col after the current tile, include it at end of move
                         if(DataBoard[startRow][currentTile].getLetter() != " ") {
                             List<String> tile =  new ArrayList<String>();
@@ -151,14 +235,16 @@ public class Board
                             tile.add(String.valueOf(DataBoard[startRow][currentTile].getValue()));
                             currentMove.add(currentMove.size(), tile);
                             useETile = true;
+                            currentTile++;
                         }
-                    currentTile++;
+                        else
+                            break;
                     }
                 }
             }   
 
-        // we are going vertically
-        else if(endRow - startRow != 0) {    
+        // currentMove is vertical
+        else if(endRow - startRow != 0 || oneVertical) {    
               // if you can go backwards from start tile 
               if(startRow - 1 >= 0) {
                 int currentTile = startRow - 1;
@@ -172,8 +258,11 @@ public class Board
                         tile.add(String.valueOf(DataBoard[currentTile][startCol].getValue()));
                         currentMove.add(0, tile);
                         useETile = true;
+                        currentTile--;
                     }
-                currentTile--;
+                    else
+                        break;
+                
                 }
             }
 
@@ -188,7 +277,6 @@ public class Board
                         tile.add(DataBoard[startRow+1][startCol].getLetter());
                         tile.add(String.valueOf(DataBoard[startRow+1][startCol].getRow()));
                         tile.add(String.valueOf(DataBoard[startRow+1][startCol].getColumn()));
-                        System.out.println(DataBoard[startRow+1][startCol].getValue());
                         tile.add(String.valueOf(DataBoard[startRow+1][startCol].getValue()));
 
                         currentMove.add(currentMovePos + 1, tile);
@@ -217,43 +305,73 @@ public class Board
                         tile.add(String.valueOf(DataBoard[currentTile][startCol].getValue()));
                         currentMove.add(currentMove.size(), tile);
                         useETile = true;
+                        currentTile++;
                     }
-                currentTile++;
+                    else
+                        break;
+                
                 }
             } 
         }
 
-        for(List<String> originalTile : currentMove)
-        {
+        // the only information Player needs to construct the final move 
+        // is the letter and tile value
+        // so create a new container to only send that information
+         List<List<String>> finalMove = new ArrayList<List<String>>();
+
+        for(List<String> originalTile : currentMove) {
             List<String> lessTile =  new ArrayList<String>();
 
             lessTile.add(originalTile.get(0));  // letter
             lessTile.add(originalTile.get(3));  // points value 
-
-            // special tile value at row and column
-            lessTile.add(String.valueOf(specialTiles(Integer.parseInt(originalTile.get(1)), Integer.parseInt(originalTile.get(2)))));
+ //HERE           lessTile.add(originalTile.get(4));    //HEEEEEEEERRRRRRRRRRREEEE
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             finalMove.add(lessTile);
         }
 
+        // determine if the player's move is valid or not
         boolean validMove = updateBoard(player.move(finalMove, useETile));
 
+        // valid, continue game
         if(!Game.letters.isLetterBagEmpty() && validMove)
             return 0;
 
+        // invalid, continue game
         else if(!validMove)
             return 1;
 
+        // catchall
         return 2;
     }
 
-
-    public static void onCancel()
-    {
-
+    // clear the data and GUI of the current tiles when a move is canceled
+    // then reset the player's rack
+    public static void onCancel(Player player) {
+        for(List<String> tile : currentMove)
+        {
+            if(!DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].isPreviousMove())
+            {
+                DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setLetter(" ");
+                DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPointsValue(0);
+                DataBoard[Integer.parseInt(tile.get(1))][Integer.parseInt(tile.get(2))].setPreviousMove(false);
+                for(int x = 0; x < ViewBoard.getChildren().size(); x++)
+                {
+                    if(ViewBoard.getChildren().get(x) instanceof StackPane && ViewBoard.getRowIndex(ViewBoard.getChildren().get(x)) == Integer.parseInt(tile.get(1))
+                            && ViewBoard.getColumnIndex(ViewBoard.getChildren().get(x)) == Integer.parseInt(tile.get(2)))
+                    {
+                        StackPane child = (StackPane) ViewBoard.getChildren().get(x);
+                        child.getChildren().remove(0);
+                        child.setDisable(false);
+                        break;
+                    }
+                }
+            }
+        }
+        player.getPlayerRack().clearRack();;
         currentMove.clear();
-        // TODO: remove tiles from board 
     }
 
+    // calculate each player's final scores to determine a winner
     public static int getWinner(Player[] players) {
         int[] finalScores = new int[players.length];
 
@@ -272,3 +390,4 @@ public class Board
         return winner;
     }
 }
+ 
