@@ -27,7 +27,11 @@ public class Board
     {
         ViewBoard = new GridPane();
         DataBoard = new Tile[15][15];
-        specialPoints = new int[15][15];
+        
+         // integer 2d array that holds 5 categories for special points values
+        // 1 = regular tiles, 2 = light blue, 3 = dark blue, 4 = pink, 5 = red
+        // these do not equate to the actual points values; they're more like flags
+        specialPoints = new int[15][15];       
         currentMove = new ArrayList<List<String>>();
         ViewBoard.setPrefSize(800,500);
         ViewBoard.setAlignment(Pos.CENTER);
@@ -51,7 +55,7 @@ public class Board
                     specialPoints[rows][cols] = 4;
                   }
 
-                // light blue tiles
+                // light blue and red tiles
                 else if(rows == 0 || rows == 2 || rows == 3 || rows == 11 || rows == 12 || rows == 14 ||
                    rows == 6 || rows == 7 || rows == 8) {
                     if(((rows == 0 || rows == 14) && (cols == 3 || cols == 11)) ||
@@ -67,7 +71,7 @@ public class Board
                             blankTile.setColor('r');
                             specialPoints[rows][cols] = 5;
                         }
-                        
+                        // don't color the center tile
                             specialPoints[rows][cols] = 1; 
                     }
 
@@ -345,7 +349,7 @@ public class Board
         }
 
         // the only information Player needs to construct the final move 
-        // is the letter and tile value
+        // is the letter, tile value, and special points value
         // so create a new container to only send that information
          List<List<String>> finalMove = new ArrayList<List<String>>();
 
