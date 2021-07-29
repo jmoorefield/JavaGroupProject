@@ -45,45 +45,39 @@ public class Board
                 Tile blankTile = new Tile(" ");
                 DataBoard[rows][cols] = blankTile;
                 
-                  // pink tiles
-                  if((rows == 1 && cols == 1) || (rows == 2 && cols == 2) || (rows == 3 && cols == 3) || (rows == 4 && cols == 4) ||  (rows == 1 && cols == 13) || 
-                  (rows == 2 && cols == 12) || (rows == 3 && cols == 11) || (rows == 4 && cols == 10) || (rows == 13 && cols == 1) || (rows == 12 && cols == 2) || 
-                  (rows == 11 && cols == 3) || (rows == 10 && cols == 4) || (rows == 13 && cols == 13) || (rows == 12 && cols == 12) || (rows == 11 && cols == 11) || 
-                  (rows == 10 && cols == 10))
-                  {
-                    blankTile.setColor('p');
-                    specialPoints[rows][cols] = 4;
-                  }
+                // pink tiles
+                if(((rows == cols) && (rows == 1 || rows == 2 | rows == 3 || rows == 4 || rows == 10 || rows == 11 || rows == 12 || rows == 13)) ||
+                  (rows == 2 && cols == 12) || (rows == 3 && cols == 11) || (rows == 4 && cols == 10) || (rows == 13 && cols == 1) ||
+                   (rows == 12 && cols == 2) || (rows == 11 && cols == 3) || (rows == 1 && cols == 13) || (rows == 10 && cols == 4)) {
+                        blankTile.setColor('p');
+                        specialPoints[rows][cols] = 4;
+                }
 
-                // light blue and red tiles
-                else if(rows == 0 || rows == 2 || rows == 3 || rows == 11 || rows == 12 || rows == 14 ||
-                   rows == 6 || rows == 7 || rows == 8) {
-                    if(((rows == 0 || rows == 14) && (cols == 3 || cols == 11)) ||
-                      ((rows == 2 || rows == 12) && (cols == 6 || cols == 8))  ||
-                      ((rows == 3 || rows == 11) && (cols == 0 || cols == 7 || cols == 14)) || 
-                      ((rows == 6 || rows == 8) && (cols == 2 || cols == 6 || cols == 8 || cols == 12)) ||
-                      (rows == 7 && (cols == 3 || cols == 11))) {
+                // red tiles and some light blue tiles
+                else if(!(cols == 7 && rows == 7) && (rows == 0 || rows == 7 || rows == 14)) {
+                    if(cols == 0 || cols == 7 || cols == 14) {
+                        blankTile.setColor('r');
+                        specialPoints[rows][cols] = 5;
+                    }
+                    else if(((rows == 0 || rows == 14) && (cols == 3 || cols == 11)) || (rows == 7 && (cols == 3 || cols == 11))) {
                         blankTile.setColor('l');
                         specialPoints[rows][cols] = 2;
                     }
-                    else if(rows == 0 || rows == 7 || rows == 14) {
-                        if(!(cols == 7 && rows == 7) && (cols == 0 || cols == 7 || cols == 14)) {
-                            blankTile.setColor('r');
-                            specialPoints[rows][cols] = 5;
-                        }
-                        // don't color the center tile
-                            specialPoints[rows][cols] = 1; 
-                    }
-
                 }
+
+                // other light blue tiles
+                else if(((rows == 2 || rows == 12) && (cols == 6 || cols == 8)) ||
+                      ((rows == 3 || rows == 11) && (cols == 0 || cols == 7 || cols == 14)) || 
+                      ((rows == 6 || rows == 8) && (cols == 2 || cols == 6 || cols == 8 || cols == 12))) {
+                        blankTile.setColor('l');
+                        specialPoints[rows][cols] = 2;
+                    }
+                    
                 // dark blue tiles
-                else if(rows == 1 || rows == 13 || rows == 5 || rows == 9) {
-                    if(((rows == 1 || rows == 13) && (cols == 5 || cols == 9)) ||
+                else if(((rows == 1 || rows == 13) && (cols == 5 || cols == 9)) ||
                       ((rows == 5 || rows == 9) && (cols == 1 || cols == 13 || cols == 5 || cols == 9))) {
                         blankTile.setColor('b');
                         specialPoints[rows][cols] = 3;
-                    }
-                    
                 }
                 // regular tiles
                 else
