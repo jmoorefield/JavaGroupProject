@@ -115,6 +115,12 @@ public class Tile
     public void setPointsValue(int points)  { this.value = points; }
     public void setPreviousMove(boolean isUsed) { this.fromPreviousMove = isUsed; }
     
+    //*******************************************************************************
+    // * Name: setColor.                                                            *
+    // * Description:  sets the background color of a tile                          *
+    // * Last Modified by: Jess Moorefield                                          *
+    // * Date:  07/29/2021                                                          *
+    // ******************************************************************************
     public void setColor(char value) {
         if(value == 'l')
             this.holder.setStyle("-fx-background-color: #bbdff7");
