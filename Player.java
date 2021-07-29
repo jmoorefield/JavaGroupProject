@@ -1,7 +1,7 @@
 /* COP3252
-Jess Moorefield, Roderick Quiel
+Jess Moorefield, Roderick Quiel, Abigail Taylor
 Group Project
-25 July 2021 
+29 July 2021 
 */
 
 /* This class contains functionality for a game player. */
@@ -32,7 +32,31 @@ public class Player
     {
         word += tile.get(0);
         points += Integer.parseInt(tile.get(1));    //This is where you can double, or triple points if they are on a colored spot
-        //point += Integer.parse(tile.get(2));  //CHANGE THE VALUE OF THE TILE (DOUBLES)
+        //points += Integer.parseInt(tile.get(2));  //CHANGE THE VALUE OF THE TILE (DOUBLES)
+        /*
+            
+
+            for (int cols = 1; cols < 16; cols++ )
+            {   
+                for (int rows =1; rows < 16; rows++)
+                {
+                                //if the player hits a colored square, adjust the proper amount of points
+                            //use the array numPoints 
+                    if (numpoints [rows] [cols] == 0)
+                        points += Integer.parseInt(word.get(3)) //not sure if the 
+                                //then triple the word's amount of points
+                    else if (numPoints[rows][cols] == 1)
+                         points += Integer.parseInt(word.get(3)) //not sure if the 
+                                //then triple the word's amount of points                       
+                    //The value for a light blue square is 2, dark blue is 3 (each respectively affect the letter's score)
+                    //    The Red value will be 0 (triples word value), and the pink value witll be 1 (doubles word value)
+                    //    The blank will be 5                    
+                }
+
+                          
+            }
+              
+        */
     }
     //TO CHANGE THE WHOLE WORD, DO IT OUT HERE
     

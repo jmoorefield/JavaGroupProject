@@ -8,9 +8,9 @@ import java.util.Scanner;
 /// *                      Text Prompt Class                    *
 /// *************************************************************
 /* COP3252
-Jess Moorefield, Roderick Quiel
+Jess Moorefield, Roderick Quiel, Abigail Taylor
 Group Project
-25 July 2021
+29 July 2021
 */
 
 public class TextPrompt {

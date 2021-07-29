@@ -1,12 +1,15 @@
 /* COP3252
-Jess Moorefield, Roderick Quiel
+Jess Moorefield, Roderick Quiel, Abigail Taylor
 Group Project
-25 July 2021 
+29 July 2021 
 */
 
 /* This class controls the GUI and data portions of the game board and constructs a player's move. */
 
 import java.util.*;
+
+import javax.lang.model.util.ElementScanner14;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -21,7 +24,8 @@ public class Board
     private static Tile[][] numPoints;  
     /*The value for a light blue square is 2, dark blue is 3 (each respectively affect the letter's score)
         The Red value will be 0 (triples word value), and the pink value witll be 1 (doubles word value)
-    */
+        The blank will be 5
+        */
 
     // each list contains Strings that hold data about each tile in the current move
     private static List<List<String>> currentMove;
@@ -30,7 +34,7 @@ public class Board
     public Board()
     {
         ViewBoard = new GridPane();
-        DataBoard = new Tile[15][15];
+        DataBoard = new Tile[16][16];
         currentMove = new ArrayList<List<String>>();
         ViewBoard.setPrefSize(800,500);
         ViewBoard.setAlignment(Pos.CENTER);
@@ -38,15 +42,10 @@ public class Board
 ///////////////////////////////////////////////////////////////////////////////////////////
         // populate the board with blank  & colored tiles
         for(int rows = 1; rows < 16; rows++)
-        {   //So I accidentally wrote the pink if statememnt thinking that we started at 1, but originally it 
-            //started at 0, but it makes things in this part a lot harder if it's 0, so I changed it to 1
+        {   //Double check that the index doesn't go out of bounds 
             for(int cols = 1; cols < 16; cols++ )
             {
-                Tile blankTile = new Tile(" ");
-                ViewBoard.add(blankTile.getHolder(), cols, rows);
-                DataBoard[rows][cols] = blankTile;
-                //Color in the pink squares
-                
+                //Color in the pink squares                
                 if((rows == 2 && cols == 2) || (rows == 3 && cols == 3) || (rows == 4 && cols == 4) || (rows == 5 && cols == 5) ||  (rows == 2 && cols == 14) || (rows == 3 && cols == 13) || (rows == 4 && cols == 12) || (rows == 5 && cols == 11) || (rows == 14 && cols == 2) || (rows == 13 && cols == 3) || (rows == 12 && cols == 4) || (rows == 11 && cols == 5) || (rows == 14 && cols == 14) || (rows == 13 && cols == 13) || (rows == 12 && cols == 12) || (rows == 11 && cols == 11) || (rows == 8 && cols == 8))
                 {
                     PinkTile pinkTile = new PinkTile(" ");
@@ -61,7 +60,27 @@ public class Board
                     DataBoard[rows][cols] = redTile;
                     numPoints[rows][cols] = 0; //sets flag for red                
                 }
-                //do if statements for the blues as well, then have blank as a else catch-all
+                else if((rows == 1 && cols == 4) || (rows == 1 && cols == 12) || (rows == 3 && cols == 7) || (rows == 3 && cols == 9) || (rows == 4 && cols == 1) || (rows == 4 && cols == 8) || (rows == 4 && cols == 15) || (rows == 7 && cols == 3) || (rows == 7 && cols == 7) || (rows == 7 && cols == 9) || (rows == 7 && cols == 13) || (rows == 8 && cols == 4) || (rows == 8 && cols == 12) || (rows == 9 && cols == 3) || (rows == 9 && cols == 7) || (rows == 9 && cols == 11) || (rows == 9 && cols == 15) || (rows == 12) && (cols == 1) || (rows == 12 && cols == 8) || (rows == 12 && cols == 15) || (rows == 13 && cols == 7) || (rows == 13 && cols == 9) || (rows == 15 && cols == 4) || (rows == 15 && cols == 12))
+                {
+                    LtBlueTile ltblueTile = new LtBlueTile(" ");
+                    ViewBoard.add(ltblueTile.getHolder(), cols, rows);
+                    DataBoard[rows][cols] = ltblueTile;
+                    numPoints[rows][cols] = 2; //sets flag for light Blue                           
+                }
+                else if ((rows == 2 && cols == 6) || (rows == 2 && cols == 10) || (rows == 6 && cols == 2) || (rows == 6 && cols == 6) || (rows == 6 && cols == 10) || (rows == 6 && cols == 14) || (rows == 10 && cols == 2) || (rows == 10 && cols == 6) || (rows == 10 && cols == 10) ||(rows == 10 && cols == 14) || (rows == 14 && cols == 6) ||(rows == 14 && cols == 10))
+                {
+                    DrkBlueTile drkblueTile = new DrkBlueTile(" ");
+                    ViewBoard.add(drkblueTile.getHolder(), cols, rows);
+                    DataBoard[rows][cols] = drkblueTile;
+                    numPoints[rows][cols] = 3; //sets flag for dark Blue  
+                }
+                else
+                {
+                    Tile blankTile = new Tile(" ");
+                    ViewBoard.add(blankTile.getHolder(), cols, rows);
+                    DataBoard[rows][cols] = blankTile; 
+                    numPoints[rows][cols] = 5; //sets flag for dark Blue                                        
+                }//have blank as an else catch-all
             }
         }
 

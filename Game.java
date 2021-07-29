@@ -1,7 +1,7 @@
 /* COP3252
-Jess Moorefield, Roderick Quiel
+Jess Moorefield, Roderick Quiel, Abigail Taylor
 Group Project
-25 July 2021 
+29 July 2021 
 */
 
 /* This class runs the game and controls the buttons used by the players. */
