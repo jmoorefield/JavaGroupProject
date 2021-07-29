@@ -23,6 +23,8 @@ public class Player
 
     // determine if a move is valid and calculate the score if so
     public boolean move(List<List<String>> playerMove, boolean useETile) {
+     // flags used for tiles that affect a move's total points value
+     // light blue and dark blue only affect a tile's points value
     boolean pink = false;
     boolean red = false;
     String word = "";
@@ -34,6 +36,7 @@ public class Player
     {
         word += tile.get(0);
 
+        // calculate move's total points, including special points from colored tiles
         if(Integer.parseInt(tile.get(2)) == 2)
             points += 2 * Integer.parseInt(tile.get(1));
         else if(Integer.parseInt(tile.get(2)) == 3)
